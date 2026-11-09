@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@theme {
+  --color-ink: #0a0a0a;
+  --color-paper: #f5f5f2;
+  --color-line: #e7e5df;
+  --color-body: #4a4a4a;
+  --color-muted: #8a8a8a;
+  --color-violet: #8b7bff;
+  --color-violet-deep: #4b1e8c;
+  --color-mint: #a8efa0;
+  --color-mint-light: #c7f8c0;
+  --color-mint-band: #dcf7d8;
+  --color-green: #2f8f26;
+  --color-lilac: #c58ceb;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+    background-image: radial-gradient(rgba(10, 10, 10, 0.045) 1px, transparent 1px);
+    background-size: 24px 24px;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--color-ink); text-decoration: none; }
+  a:hover { color: var(--color-violet-deep); }
+  input, select, button { font-family: inherit; }
+}
+
+@layer components {
+  .dots-dark {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: clamp(34px, 4.4vw, 56px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+  .highlight {
+    background: linear-gradient(180deg, transparent 60%, #c7f8c0 60%, #c7f8c0 94%, transparent 94%);
+    padding: 0 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .btn-dark {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: var(--color-ink);
+    color: #fff;
+    font-weight: 600;
+  }
+  .btn-dark:hover { background: #2a2a2a; color: #fff; }
+  .btn-light {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  .btn-light:hover { background: var(--color-mint-light); color: var(--color-ink); }
+}
