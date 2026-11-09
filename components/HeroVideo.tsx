@@ -31,7 +31,7 @@ export default function HeroVideo() {
       <iframe
         ref={ref}
         src={`https://player.vimeo.com/video/${VIMEO_ID}?badge=0&autopause=0&autoplay=1&muted=1&dnt=1`}
-        title="North AI 2027 strategy video"
+        title="2027 Marketing Strategy"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
         referrerPolicy="strict-origin-when-cross-origin"
         className="absolute inset-0 block h-full w-full border-0"
