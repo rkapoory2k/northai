@@ -23,8 +23,14 @@ export type CapiEvent = {
  */
 export async function sendCapiEvent(e: CapiEvent): Promise<void> {
   const token = process.env.META_CAPI_TOKEN;
-  if (!PIXEL_ID || !token) return;
-  if (!e.ctx.consent) return;
+  if (!PIXEL_ID || !token) {
+    console.warn(`[capi] ${e.eventName} skipped: Pixel ID or META_CAPI_TOKEN not set`);
+    return;
+  }
+  if (!e.ctx.consent) {
+    console.info(`[capi] ${e.eventName} skipped: no tracking consent`);
+    return;
+  }
 
   const user_data: Record<string, unknown> = {
     client_ip_address: e.ctx.ip,
@@ -65,7 +71,9 @@ export async function sendCapiEvent(e: CapiEvent): Promise<void> {
       `https://graph.facebook.com/${version}/${PIXEL_ID}/events?access_token=${encodeURIComponent(token)}`,
       { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body), signal: AbortSignal.timeout(8000) },
     );
-    if (!res.ok) console.error(`[capi] ${e.eventName} failed`, res.status, await res.text());
+    const text = await res.text();
+    if (!res.ok) console.error(`[capi] ${e.eventName} failed`, res.status, text);
+    else console.info(`[capi] ${e.eventName} sent (event_id ${e.eventId}${body.test_event_code ? `, test code ${body.test_event_code}` : ""})`, text);
   } catch (err) {
     console.error(`[capi] ${e.eventName} error`, err);
   }
