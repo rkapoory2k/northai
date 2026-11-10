@@ -1,18 +1,27 @@
 import "server-only";
 import { splitName, type Lead } from "@/lib/lead";
+import { folkEnabled, sendToFolk } from "./folk";
 
 export type CrmEvent = "lead.created" | "order.paid" | "call.booked";
 
 /**
- * Posts a flat JSON payload to CRM_WEBHOOK_URL (GoHighLevel inbound webhook, HubSpot workflow,
- * Zapier/Make hook, ...). Never throws. Returns whether the CRM accepted it.
+ * Delivers a funnel event to the CRM: folk (when FOLK_API_KEY + FOLK_GROUP_ID are set) and/or a
+ * generic JSON webhook (CRM_WEBHOOK_URL). Never throws. Returns whether any destination accepted it.
  */
 export async function sendToCrm(event: CrmEvent, lead: Lead, extra: Record<string, unknown> = {}): Promise<boolean> {
   const url = process.env.CRM_WEBHOOK_URL;
-  if (!url) {
-    console.warn(`[crm] CRM_WEBHOOK_URL not set; dropping ${event} for ${lead.email}`);
+  if (!url && !folkEnabled()) {
+    console.warn(`[crm] no CRM configured (FOLK_API_KEY/FOLK_GROUP_ID or CRM_WEBHOOK_URL); dropping ${event} for ${lead.email}`);
     return false;
   }
+  const results = await Promise.all([
+    folkEnabled() ? sendToFolk(event, lead, extra) : Promise.resolve(false),
+    url ? sendToWebhook(url, event, lead, extra) : Promise.resolve(false),
+  ]);
+  return results.some(Boolean);
+}
+
+async function sendToWebhook(url: string, event: CrmEvent, lead: Lead, extra: Record<string, unknown>): Promise<boolean> {
   const { first, last } = splitName(lead.name);
   const payload = {
     event,

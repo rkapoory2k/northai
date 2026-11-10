@@ -61,6 +61,12 @@ CAPI sends SHA-256-hashed email, phone, first and last name, `external_id`, plus
 
 ## CRM
 
+### folk (built in)
+
+Set `FOLK_API_KEY` and `FOLK_GROUP_ID`. Each funnel event upserts the person by email in that group, moves the group's `Status` single-select forward (`Lead` → `Paid` → `Booked`, never backwards; field name configurable with `FOLK_STATUS_FIELD`, empty to skip) and adds a note with the details (page, UTMs, Stripe payment, Calendly event). Results are logged as `[folk]` in the Vercel function logs.
+
+### Generic webhook (optional)
+
 Every lead event is a JSON `POST` to `CRM_WEBHOOK_URL`, with an `X-Webhook-Secret` header if `CRM_WEBHOOK_SECRET` is set. This works with a GoHighLevel inbound webhook, a HubSpot workflow webhook, a Zapier or Make catch hook, Airtable automations, and similar tools.
 
 ```json
