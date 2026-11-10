@@ -7,7 +7,7 @@ import { useFunnel, type Step } from "./FunnelProvider";
 import { getStripe } from "./stripeClient";
 import { validateLead, type Lead, type LeadErrors } from "@/lib/lead";
 import { getAttribution, newEventId, track } from "@/lib/tracking";
-import { CALENDLY_URL, CURRENCY, PRICE_CENTS, PRODUCT_NAME, STRIPE_PK } from "@/lib/config";
+import { CALENDLY_URL, CURRENCY, LEGAL, PRICE_CENTS, PRODUCT_NAME, STRIPE_PK } from "@/lib/config";
 import { stack } from "@/lib/content";
 import { ArrowIcon, CheckIcon, LockIcon } from "../icons";
 
@@ -318,6 +318,10 @@ function PaymentForm() {
       <button type="submit" disabled={!stripe || !ready || busy} className={primaryBtn}>
         {busy ? "Processing…" : "Complete order · $49"}
       </button>
+      <p className="m-0 -mt-2 text-center text-[13px] leading-snug text-body">
+        By completing your order you agree to the{" "}
+        <a href={LEGAL.terms} target="_blank" rel="noopener" className="underline">purchase terms</a>, including our 14-day refund policy.
+      </p>
     </form>
   );
 }

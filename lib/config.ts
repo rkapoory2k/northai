@@ -22,9 +22,11 @@ export const REQUIRE_CONSENT = process.env.NEXT_PUBLIC_REQUIRE_CONSENT !== "fals
 export const CONSENT_COOKIE = "na_consent";
 
 export const LEGAL = {
-  terms: process.env.NEXT_PUBLIC_TERMS_URL || "#top",
-  privacy: process.env.NEXT_PUBLIC_PRIVACY_URL || "#top",
-  cookies: process.env.NEXT_PUBLIC_COOKIE_URL || "#top",
+  terms: process.env.NEXT_PUBLIC_TERMS_URL || "/terms",
+  mainTerms: "https://north-ai.com/terms",
+  privacy: process.env.NEXT_PUBLIC_PRIVACY_URL || "https://north-ai.com/privacy",
+  cookies: process.env.NEXT_PUBLIC_COOKIE_URL || "https://north-ai.com/cookies",
+  contact: "legal@north-ai.com",
 };
 
 // The product. The amount charged is defined server-side (lib/server/product.ts) and must match.

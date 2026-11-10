@@ -303,7 +303,7 @@ export default function Page() {
             <a href={LEGAL.privacy} className="text-white/70 hover:text-white">Privacy Policy</a>
             <a href={LEGAL.cookies} className="text-white/70 hover:text-white">Cookie Policy</a>
           </nav>
-          <span className="text-[14px] text-white/60">© {new Date().getFullYear()} North AI. All rights reserved. Registered in the United Kingdom.</span>
+          <span className="text-[14px] text-white/60">© {new Date().getFullYear()} North AI Ltd. All rights reserved. Registered in the United Kingdom.</span>
         </div>
       </footer>
     </FunnelProvider>
