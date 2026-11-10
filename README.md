@@ -84,6 +84,10 @@ Every lead event is a JSON `POST` to `CRM_WEBHOOK_URL`, with an `X-Webhook-Secre
 
 `order.paid` adds `amount`, `currency`, `product`, and `stripe_payment_intent`. `call.booked` adds the Calendly event and invitee URIs. Upsert contacts on `email`. The lead is sent at step 1, before payment, so abandoned checkouts can be retargeted.
 
+## Paid-but-not-booked digest
+
+A Vercel Cron (`vercel.json`, daily 09:00 UTC) calls `/api/cron/unbooked`, which lists succeeded PaymentIntents from the last 14 days that were paid 2+ hours ago, have no `booked_at` metadata and haven't been reported, emails them to `DIGEST_TO` via Resend, then stamps `unbooked_notified_at` so each buyer is reported once. `booked_at` is set when the buyer books in the embedded Calendly (step 3). Bookings made outside the embed aren't detected.
+
 ## Deploy to Vercel
 
 1. Import the repo at vercel.com/new (framework preset: Next.js; no other settings needed).

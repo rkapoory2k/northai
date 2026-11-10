@@ -3,6 +3,7 @@ import { validateLead } from "@/lib/lead";
 import { clientContext, isSameOrigin } from "@/lib/server/request";
 import { sendCapiEvent } from "@/lib/server/capi";
 import { sendToCrm } from "@/lib/server/crm";
+import { markBooked } from "@/lib/server/bookings";
 
 export const runtime = "nodejs";
 
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
     await sendCapiEvent({ eventName, eventId: body.eventId.slice(0, 100), sourceUrl, ctx, user, customData });
     if (eventName === "Schedule" && user) {
       const s = (x: unknown) => (typeof x === "string" ? x.slice(0, 300) : undefined);
+      await markBooked(s(body.paymentIntentId), user.email);
       await sendToCrm("call.booked", user, {
         calendly_event_uri: s(body.calendly?.event),
         calendly_invitee_uri: s(body.calendly?.invitee),
