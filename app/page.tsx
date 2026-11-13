@@ -1,32 +1,18 @@
-import Image from "next/image";
 import FunnelProvider from "@/components/funnel/FunnelProvider";
 import ClaimButton from "@/components/funnel/ClaimButton";
 import Faq from "@/components/Faq";
 import HeroVideo from "@/components/HeroVideo";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
-import { LEGAL, SPOTS_CAPACITY, SPOTS_LEFT, SPOTS_LINE } from "@/lib/config";
-import { alternatives, brands, compare, outcomes, parts, promises, stack, timeline } from "@/lib/content";
+import { SPOTS_CAPACITY, SPOTS_LEFT, SPOTS_LINE, VIMEO_ID } from "@/lib/config";
+import { Brands, SiteFooter, SiteHeader } from "@/components/SiteChrome";
+import { alternatives, compare, faqs, outcomes, parts, promises, stack, timeline } from "@/lib/content";
 
 const Dot = ({ className }: { className: string }) => <span aria-hidden className={`size-1.5 shrink-0 rounded-full ${className}`} />;
 
 export default function Page() {
   return (
     <FunnelProvider>
-      {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-line bg-[rgba(245,245,242,0.88)] backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-6 py-3.5">
-          <a href="#top" className="flex items-center">
-            <Image src="/logo-wordmark.png" alt="North AI" width={107} height={28} priority className="block h-7 w-auto" />
-          </a>
-          <div className="flex items-center gap-[18px]">
-            <span className="hidden items-center gap-2 font-mono text-[12px] uppercase tracking-[0.06em] text-body md:inline-flex">
-              <span className="size-[7px] rounded-full bg-green" />
-              {SPOTS_LINE}
-            </span>
-            <ClaimButton className="btn-dark px-5 py-[11px] text-[15px]">Claim your strategy</ClaimButton>
-          </div>
-        </div>
-      </header>
+      <SiteHeader note={SPOTS_LINE} cta="Claim your strategy" />
 
       <main>
         {/* Hero */}
@@ -49,19 +35,10 @@ export default function Page() {
             </ClaimButton>
             <span className="font-mono text-[13px] tracking-[0.04em] text-body">Full refund available · Yours to keep · Strict NDA</span>
           </div>
-          <HeroVideo />
+          <HeroVideo vimeoId={VIMEO_ID} title="2027 Marketing Strategy" />
         </section>
 
-        {/* Brands */}
-        <section className="mx-auto flex max-w-[1080px] flex-col items-center gap-8 px-6 pt-4 pb-[88px]">
-          <span className="font-mono text-[12px] uppercase tracking-[0.12em] text-body">Brands we’ve worked with</span>
-          <div className="grid w-full grid-cols-[repeat(auto-fit,minmax(150px,1fr))] items-center justify-items-center gap-x-8 gap-y-9">
-            {brands.map((b) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img key={b.src} src={b.src} alt={b.name} loading="lazy" style={{ height: b.h }} className="block w-auto max-w-full object-contain" />
-            ))}
-          </div>
-        </section>
+        <Brands />
 
         {/* The cost of guessing */}
         <section className="border-y border-line bg-white">
@@ -253,7 +230,7 @@ export default function Page() {
             <span className="eyebrow text-violet-deep">Questions CMOs ask</span>
             <h2 className="h2">Clear answers.</h2>
           </div>
-          <Faq />
+          <Faq items={faqs} />
         </section>
 
         {/* Apply */}
@@ -294,18 +271,7 @@ export default function Page() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-white/14 bg-ink text-white">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-5 px-6 py-8">
-          <Image src="/logo-wordmark.png" alt="North AI" width={92} height={24} className="block h-6 w-auto invert" />
-          <nav className="flex flex-wrap gap-5 text-[14px]">
-            <a href={LEGAL.terms} className="text-white/70 hover:text-white">Terms of Service</a>
-            <a href={LEGAL.privacy} className="text-white/70 hover:text-white">Privacy Policy</a>
-            <a href={LEGAL.cookies} className="text-white/70 hover:text-white">Cookie Policy</a>
-          </nav>
-          <span className="text-[14px] text-white/60">© {new Date().getFullYear()} North AI Ltd. All rights reserved. Registered in the United Kingdom.</span>
-        </div>
-      </footer>
+      <SiteFooter />
     </FunnelProvider>
   );
 }

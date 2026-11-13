@@ -3,6 +3,8 @@ import { validateLead } from "@/lib/lead";
 import { clientContext, isSameOrigin } from "@/lib/server/request";
 import { sendToCrm } from "@/lib/server/crm";
 import { sendCapiEvent } from "@/lib/server/capi";
+import { notifyNewLead } from "@/lib/server/notify";
+import { OFFERS, type OfferId } from "@/lib/offers";
 
 export const runtime = "nodejs";
 
@@ -18,6 +20,7 @@ export async function POST(req: Request) {
   const v = validateLead(body);
   if (!v.ok) return NextResponse.json({ error: "invalid", errors: v.errors }, { status: 400 });
 
+  const offer = OFFERS[(body.offer as OfferId) in OFFERS ? (body.offer as OfferId) : "strategy"];
   const ctx = clientContext(req);
   const sourceUrl = typeof body.sourceUrl === "string" ? body.sourceUrl.slice(0, 500) : ctx.referer;
   const eventId = typeof body.eventId === "string" ? body.eventId.slice(0, 100) : `lead_${crypto.randomUUID()}`;
@@ -27,8 +30,9 @@ export async function POST(req: Request) {
   // Respond immediately; deliver to CRM + Meta after the response is sent.
   after(() =>
     Promise.all([
-      sendToCrm("lead.created", v.lead, { page_url: sourceUrl, ...utm }),
-      sendCapiEvent({ eventName: "Lead", eventId, sourceUrl, ctx, user: v.lead, customData: { content_name: "2027 strategy" } }),
+      sendToCrm("lead.created", v.lead, { offer: offer.id, page_url: sourceUrl, ...utm }),
+      sendCapiEvent({ eventName: "Lead", eventId, sourceUrl, ctx, user: v.lead, customData: { content_name: offer.contentName } }),
+      offer.paid ? Promise.resolve() : notifyNewLead(offer, v.lead, { pageUrl: sourceUrl, utm }),
     ]),
   );
 

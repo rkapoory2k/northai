@@ -4,6 +4,7 @@ import { clientContext, isSameOrigin } from "@/lib/server/request";
 import { sendCapiEvent } from "@/lib/server/capi";
 import { sendToCrm } from "@/lib/server/crm";
 import { markBooked } from "@/lib/server/bookings";
+import { OFFERS, type OfferId } from "@/lib/offers";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,7 @@ export async function POST(req: Request) {
   if (!ALLOWED.has(eventName) || typeof body.eventId !== "string") {
     return NextResponse.json({ error: "invalid" }, { status: 400 });
   }
+  const offer = OFFERS[(body.offer as OfferId) in OFFERS ? (body.offer as OfferId) : "strategy"];
   const ctx = clientContext(req);
   const v = body.lead ? validateLead(body.lead) : null;
   const user = v?.ok ? v.lead : undefined;
@@ -28,7 +30,7 @@ export async function POST(req: Request) {
       ? { value: 49, currency: "USD", num_items: 1, content_name: "2027 strategy" }
       : eventName === "ViewContent"
         ? { content_name: "Hero video" }
-        : { content_name: "Kickoff call" };
+        : { content_name: `${offer.contentName}: call` };
 
   after(async () => {
     await sendCapiEvent({ eventName, eventId: body.eventId.slice(0, 100), sourceUrl, ctx, user, customData });
@@ -36,6 +38,7 @@ export async function POST(req: Request) {
       const s = (x: unknown) => (typeof x === "string" ? x.slice(0, 300) : undefined);
       await markBooked(s(body.paymentIntentId), user.email);
       await sendToCrm("call.booked", user, {
+        offer: offer.id,
         calendly_event_uri: s(body.calendly?.event),
         calendly_invitee_uri: s(body.calendly?.invitee),
         stripe_payment_intent: s(body.paymentIntentId),

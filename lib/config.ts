@@ -34,3 +34,6 @@ export const PRODUCT_NAME = "2027 Creative & Paid Media Strategy";
 export const PRICE_CENTS = 4900;
 export const CURRENCY = "usd";
 export const DEFAULT_PHONE_COUNTRY = "GB" as const;
+
+/** Hero video for the Black Friday page; empty shows a "video coming soon" placeholder. */
+export const BFCM_VIMEO_ID = process.env.NEXT_PUBLIC_BFCM_VIMEO_ID || "";

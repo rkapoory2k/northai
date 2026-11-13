@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { faqs } from "@/lib/content";
 
-export default function Faq() {
+export default function Faq({ items }: { items: [string, string][] }) {
   const [open, setOpen] = useState(0);
   return (
     <div className="flex flex-col border-t-2 border-ink">
-      {faqs.map(([q, a], i) => {
+      {items.map(([q, a], i) => {
         const isOpen = open === i;
         return (
           <div key={q} className="border-b border-line">

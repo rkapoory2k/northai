@@ -11,14 +11,17 @@ import { CALENDLY_URL, CURRENCY, LEGAL, PRICE_CENTS, PRODUCT_NAME, STRIPE_PK } f
 import { stack } from "@/lib/content";
 import { ArrowIcon, CheckIcon, LockIcon } from "../icons";
 
-const STEPS: [Step, string][] = [[1, "Your details"], [2, "Order"], [3, "Book call"]];
 const inputCls =
   "rounded-[12px] border border-line bg-paper px-4 py-[15px] text-[16px] text-ink outline-none transition-colors focus:border-violet focus:bg-white aria-[invalid=true]:border-[#D64545]";
 const primaryBtn =
   "flex cursor-pointer items-center justify-center gap-3 rounded-full border-0 bg-ink px-7 py-[18px] text-[18px] font-semibold text-white hover:bg-[#2a2a2a] disabled:cursor-wait disabled:opacity-70";
 
 export default function ClaimModal() {
-  const { state, close } = useFunnel();
+  const { state, close, offer } = useFunnel();
+  const steps: [Step, string][] = offer.paid
+    ? [[1, "Your details"], [2, "Order"], [3, "Book call"]]
+    : [[1, "Your details"], [2, "Book call"]];
+  const bookStep: Step = offer.paid ? 3 : 2;
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,15 +45,15 @@ export default function ClaimModal() {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Claim your 2027 strategy"
+        aria-label={offer.modalTitle}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: state.step === 3 ? 880 : 560 }}
+        style={{ maxWidth: state.step === bookStep ? 880 : 560 }}
         className="w-full overflow-hidden rounded-[26px] bg-white text-ink shadow-[0_40px_90px_-30px_rgba(0,0,0,0.7)] outline-none transition-[max-width] duration-250 ease-in-out"
       >
         <div className="flex items-center justify-between gap-3 border-b border-line px-[26px] py-5">
           <ol className="m-0 flex list-none flex-wrap items-center gap-2 p-0">
-            {STEPS.map(([n, label]) => {
+            {steps.map(([n, label]) => {
               const on = state.step >= n;
               return (
                 <li key={n} className={`inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] ${on ? "text-ink" : "text-muted"}`} aria-current={state.step === n ? "step" : undefined}>
@@ -63,8 +66,8 @@ export default function ClaimModal() {
           <button onClick={close} aria-label="Close" className="size-9 shrink-0 cursor-pointer rounded-full border-0 bg-ink/6 text-[20px] leading-none text-ink hover:bg-ink/10">×</button>
         </div>
         {state.step === 1 && <DetailsStep />}
-        {state.step === 2 && <OrderStep />}
-        {state.step === 3 && <BookStep />}
+        {offer.paid && state.step === 2 && <OrderStep />}
+        {state.step === bookStep && <BookStep />}
       </div>
     </div>
   );
@@ -73,7 +76,7 @@ export default function ClaimModal() {
 /* ------------------------------ Step 1 ------------------------------ */
 
 function DetailsStep() {
-  const { state, setForm, setStep } = useFunnel();
+  const { state, setForm, setStep, offer } = useFunnel();
   const [form, setLocal] = useState<Lead>(state.form);
   const [errors, setErrors] = useState<LeadErrors>({});
   const [busy, setBusy] = useState(false);
@@ -99,7 +102,7 @@ function DetailsStep() {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ ...v.lead, eventId, sourceUrl: location.href, utm: getAttribution(), company_website: honeypot.current?.value || "" }),
+        body: JSON.stringify({ ...v.lead, offer: offer.id, eventId, sourceUrl: location.href, utm: getAttribution(), company_website: honeypot.current?.value || "" }),
       });
       if (res.status === 400) {
         const data = await res.json().catch(() => ({}));
@@ -112,8 +115,8 @@ function DetailsStep() {
     } catch {
       // Network hiccup: don't block the sale; the Stripe webhook still records the buyer.
     }
-    track("Lead", { content_name: "2027 strategy" }, { eventId });
-    setForm(v.lead);
+    track("Lead", { content_name: offer.contentName }, { eventId });
+    setForm(v.lead, eventId);
     setBusy(false);
     setStep(2);
   }
@@ -121,8 +124,8 @@ function DetailsStep() {
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4 px-[26px] pt-7 pb-[30px]">
       <div className="flex flex-col gap-1.5">
-        <h3 className="m-0 text-[28px] leading-[1.05] font-bold tracking-[-0.025em]">Claim your 2027 strategy</h3>
-        <span className="text-[15px] text-body">Tell us where to send it. Takes 30 seconds.</span>
+        <h3 className="m-0 text-[28px] leading-[1.05] font-bold tracking-[-0.025em]">{offer.modalTitle}</h3>
+        <span className="text-[15px] text-body">{offer.modalSub}</span>
       </div>
       {fields.map((f) => (
         <label key={f.name} className="flex flex-col gap-[7px]">
@@ -146,7 +149,7 @@ function DetailsStep() {
       {/* honeypot */}
       <input ref={honeypot} name="company_website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 opacity-0" />
       <button type="submit" disabled={busy} className={`mt-1.5 ${primaryBtn}`}>
-        Continue to order <ArrowIcon size={18} />
+        {offer.submitLabel} <ArrowIcon size={18} />
       </button>
       <span className="text-center font-mono text-[12px] tracking-[0.04em] text-body">Confidential · Strict NDA · No spam</span>
     </form>
@@ -329,7 +332,7 @@ function PaymentForm() {
 /* ------------------------------ Step 3 ------------------------------ */
 
 function BookStep() {
-  const { state } = useFunnel();
+  const { state, offer } = useFunnel();
   const first = state.form.name.trim().split(/\s+/)[0];
 
   const src = (() => {
@@ -348,15 +351,17 @@ function BookStep() {
   useEffect(() => {
     const onMessage = (e: MessageEvent) => {
       if (e.origin !== "https://calendly.com" || e.data?.event !== "calendly.event_scheduled") return;
-      const key = `na_scheduled_${state.paymentIntentId}`;
+      const ref = state.paymentIntentId ?? state.leadId ?? newEventId("s");
+      const key = `na_scheduled_${ref}`;
       try {
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
       } catch {}
-      track("Schedule", { content_name: "Kickoff call" }, {
-        eventId: `schedule_${state.paymentIntentId ?? newEventId("s")}`,
+      track("Schedule", { content_name: `${offer.contentName}: call` }, {
+        eventId: `schedule_${ref}`,
         server: true,
         extra: {
+          offer: offer.id,
           lead: state.form,
           paymentIntentId: state.paymentIntentId,
           calendly: { event: e.data.payload?.event?.uri, invitee: e.data.payload?.invitee?.uri },
@@ -365,15 +370,15 @@ function BookStep() {
     };
     window.addEventListener("message", onMessage);
     return () => window.removeEventListener("message", onMessage);
-  }, [state.form, state.paymentIntentId]);
+  }, [state.form, state.paymentIntentId, state.leadId, offer]);
 
   return (
     <div className="flex flex-col">
       <div className="flex items-center gap-4 border-b border-line px-[26px] pt-6 pb-[18px]">
         <span className="flex size-11 shrink-0 items-center justify-center rounded-[12px] bg-mint-light"><CheckIcon size={22} color="#0A0A0A" /></span>
         <div className="flex flex-col gap-1">
-          <h3 className="m-0 text-[24px] font-bold tracking-[-0.02em]">Payment confirmed{first ? `, ${first}` : ""}.</h3>
-          <span className="text-[15px] text-body">Last step: book your 30-minute kickoff so we can start building your 2027 strategy.</span>
+          <h3 className="m-0 text-[24px] font-bold tracking-[-0.02em]">{offer.confirmTitle(first)}</h3>
+          <span className="text-[15px] text-body">{offer.confirmSub}</span>
         </div>
       </div>
       <iframe src={src} title="Book your kickoff call" className="block h-[700px] w-full border-0 bg-white" />
