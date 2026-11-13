@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { track } from "@/lib/tracking";
 
 /** Vimeo embed; fires ViewContent (Pixel + CAPI) the first time the video plays. */
-export default function HeroVideo({ vimeoId, title }: { vimeoId?: string; title: string }) {
+export default function HeroVideo({ vimeoId, title, loop = false }: { vimeoId?: string; title: string; loop?: boolean }) {
   const ref = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function HeroVideo({ vimeoId, title }: { vimeoId?: string; title:
       ) : (
       <iframe
         ref={ref}
-        src={`https://player.vimeo.com/video/${vimeoId}?badge=0&autopause=0&autoplay=1&muted=1&dnt=1`}
+        src={`https://player.vimeo.com/video/${vimeoId}?badge=0&autopause=0&autoplay=1&muted=1&dnt=1${loop ? "&loop=1" : ""}`}
         title={title}
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
         referrerPolicy="strict-origin-when-cross-origin"

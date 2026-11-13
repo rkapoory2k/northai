@@ -36,4 +36,4 @@ export const CURRENCY = "usd";
 export const DEFAULT_PHONE_COUNTRY = "GB" as const;
 
 /** Hero video for the Black Friday page; empty shows a "video coming soon" placeholder. */
-export const BFCM_VIMEO_ID = process.env.NEXT_PUBLIC_BFCM_VIMEO_ID || "";
+export const BFCM_VIMEO_ID = process.env.NEXT_PUBLIC_BFCM_VIMEO_ID || "1246608002";

@@ -49,7 +49,7 @@ export default function BlackFridayPage() {
             </ClaimButton>
             <span className="font-mono text-[13px] tracking-[0.04em] text-body">Completely free · No card needed · Strict NDA</span>
           </div>
-          <HeroVideo vimeoId={BFCM_VIMEO_ID} title="Free Black Friday creative analysis" />
+          <HeroVideo vimeoId={BFCM_VIMEO_ID} title="5 Free Ad Tests - Black Friday" loop />
         </section>
 
         <Brands />
