@@ -2,6 +2,7 @@ import FunnelProvider from "@/components/funnel/FunnelProvider";
 import ClaimButton from "@/components/funnel/ClaimButton";
 import Faq from "@/components/Faq";
 import HeroVideo from "@/components/HeroVideo";
+import Hero from "@/components/Hero";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
 import { SPOTS_CAPACITY, SPOTS_LEFT, SPOTS_LINE, VIMEO_ID } from "@/lib/config";
 import { Brands, SiteFooter, SiteHeader } from "@/components/SiteChrome";
@@ -16,27 +17,27 @@ export default function Page() {
 
       <main>
         {/* Hero */}
-        <section id="top" className="mx-auto flex max-w-[1080px] flex-col items-center gap-7 px-6 pt-[88px] pb-16 text-center">
-          <span className="inline-flex items-center gap-2.5 rounded-full bg-ink/6 px-4 py-[9px] font-mono text-[13px] font-medium uppercase tracking-[0.1em] text-body">
+        <Hero
+          eyebrow={
+            <span className="inline-flex items-center gap-2.5 rounded-full bg-ink/6 px-4 py-[9px] font-mono text-[13px] font-medium uppercase tracking-[0.1em] text-body">
             <Dot className="bg-violet" />$49 2027 marketing strategy
           </span>
-          <h1 className="m-0 text-[clamp(38px,5.4vw,70px)] leading-none font-bold tracking-[-0.04em] text-balance">
-            Walk into 2027 with a <span className="highlight"><span className="whitespace-nowrap">data-backed</span> creative strategy</span> your team can build from day one.
-          </h1>
-          <p className="m-0 max-w-[740px] text-[20px] leading-normal text-pretty text-body">
-            We map what your competitors are running, what’s working for them and where the outliers are. Then we hand you next year’s creative trends, five data-backed mock-ups and a full paid media strategy. All for $49.
-          </p>
-          <div className="flex flex-col items-center gap-3.5">
-            <span className="inline-flex items-center gap-2 rounded-full bg-mint-light px-3.5 py-[7px] font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-ink">
-              <Dot className="bg-green" />{SPOTS_LINE}
-            </span>
-            <ClaimButton className="btn-dark gap-3 px-9 py-[22px] text-[20px]">
+          }
+          title={<>Walk into 2027 with a <span className="highlight"><span className="whitespace-nowrap">data-backed</span> creative strategy</span> your team can build from day one.</>}
+          video={<HeroVideo vimeoId={VIMEO_ID} title="2027 Marketing Strategy" />}
+          cta={
+            <>
+            <ClaimButton className="btn-dark gap-3 whitespace-nowrap px-9 py-[22px] text-[20px] max-sm:px-7 max-sm:py-[18px] max-sm:text-[18px]">
               Get your strategy for $49 <ArrowIcon />
             </ClaimButton>
             <span className="font-mono text-[13px] tracking-[0.04em] text-body">Full refund available · Yours to keep · Strict NDA</span>
-          </div>
-          <HeroVideo vimeoId={VIMEO_ID} title="2027 Marketing Strategy" />
-        </section>
+            <span className="inline-flex items-center gap-2 rounded-full bg-mint-light px-3.5 py-[7px] font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-ink">
+              <Dot className="bg-green" />{SPOTS_LINE}
+            </span>
+            </>
+          }
+          body={<>We map what your competitors are running, what’s working for them and where the outliers are. Then we hand you next year’s creative trends, five data-backed mock-ups and a full paid media strategy. All for $49.</>}
+        />
 
         <Brands />
 

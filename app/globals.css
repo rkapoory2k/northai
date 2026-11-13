@@ -61,6 +61,11 @@
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
   }
+  /* Hero video: on larger screens, size it so the CTA under it stays on the first screen. */
+  .hero-video { max-width: 880px; }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .hero-video { max-width: max(420px, min(880px, calc((100svh - 470px) * 4 / 3))); }
+  }
   .btn-dark {
     display: inline-flex;
     align-items: center;

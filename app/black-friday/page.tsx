@@ -3,6 +3,7 @@ import FunnelProvider from "@/components/funnel/FunnelProvider";
 import ClaimButton from "@/components/funnel/ClaimButton";
 import Faq from "@/components/Faq";
 import HeroVideo from "@/components/HeroVideo";
+import Hero from "@/components/Hero";
 import { Brands, SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { ArrowIcon, CheckIcon } from "@/components/icons";
 import { BFCM_VIMEO_ID, LEGAL } from "@/lib/config";
@@ -30,27 +31,27 @@ export default function BlackFridayPage() {
 
       <main>
         {/* Hero */}
-        <section id="top" className="mx-auto flex max-w-[1080px] flex-col items-center gap-7 px-6 pt-[88px] pb-16 text-center">
-          <span className="inline-flex items-center gap-2.5 rounded-full bg-ink/6 px-4 py-[9px] font-mono text-[13px] font-medium uppercase tracking-[0.1em] text-body">
+        <Hero
+          eyebrow={
+            <span className="inline-flex items-center gap-2.5 rounded-full bg-ink/6 px-4 py-[9px] font-mono text-[13px] font-medium uppercase tracking-[0.1em] text-body">
             <Dot className="bg-violet" />Black Friday &amp; Cyber Monday
           </span>
-          <h1 className="m-0 text-[clamp(38px,5.4vw,70px)] leading-none font-bold tracking-[-0.04em] text-balance">
-            Stand out this Black Friday. <span className="highlight">We’ll analyse 5 of your ads</span> for free.
-          </h1>
-          <p className="m-0 max-w-[740px] text-[20px] leading-normal text-pretty text-body">
-            Every brand is about to spend more than ever, at the same time. Feeds fill up, costs climb, and most ads look the same. We’ll show you which of your creatives will stop the scroll, which will get skipped, and how to fix them before you spend.
-          </p>
-          <div className="flex flex-col items-center gap-3.5">
-            <span className="inline-flex items-center gap-2 rounded-full bg-mint-light px-3.5 py-[7px] font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-ink">
-              <Dot className="bg-green" />{NOTE}
-            </span>
-            <ClaimButton className="btn-dark gap-3 px-9 py-[22px] text-[20px]">
+          }
+          title={<>Stand out this Black Friday. <span className="highlight">We’ll analyse 5 of your ads</span> for free.</>}
+          video={<HeroVideo vimeoId={BFCM_VIMEO_ID} title="5 Free Ad Tests - Black Friday" loop />}
+          cta={
+            <>
+            <ClaimButton className="btn-dark gap-3 whitespace-nowrap px-9 py-[22px] text-[20px] max-sm:px-7 max-sm:py-[18px] max-sm:text-[18px]">
               Get my free analysis <ArrowIcon />
             </ClaimButton>
             <span className="font-mono text-[13px] tracking-[0.04em] text-body">Completely free · No card needed · Strict NDA</span>
-          </div>
-          <HeroVideo vimeoId={BFCM_VIMEO_ID} title="5 Free Ad Tests - Black Friday" loop />
-        </section>
+            <span className="inline-flex items-center gap-2 rounded-full bg-mint-light px-3.5 py-[7px] font-mono text-[12px] font-medium uppercase tracking-[0.08em] text-ink">
+              <Dot className="bg-green" />{NOTE}
+            </span>
+            </>
+          }
+          body={<>Every brand is about to spend more than ever, at the same time. Feeds fill up, costs climb, and most ads look the same. We’ll show you which of your creatives will stop the scroll, which will get skipped, and how to fix them before you spend.</>}
+        />
 
         <Brands />
 

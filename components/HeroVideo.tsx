@@ -27,7 +27,7 @@ export default function HeroVideo({ vimeoId, title, loop = false }: { vimeoId?: 
   }, [vimeoId]);
 
   return (
-    <div className="relative mt-6 aspect-[4/3] w-full max-w-[880px] overflow-hidden rounded-[26px] border border-line bg-ink shadow-[0_30px_70px_-30px_rgba(10,10,10,0.7)]">
+    <div className="hero-video relative aspect-[4/3] w-full max-sm:-mx-2 lg:max-w-none max-sm:w-[calc(100%+16px)] max-sm:max-w-none overflow-hidden rounded-[26px] border border-line bg-ink shadow-[0_30px_70px_-30px_rgba(10,10,10,0.7)]">
       {!vimeoId ? (
         <div className="dots-dark absolute inset-0 flex flex-col items-center justify-center gap-[18px]">
           <span className="flex size-[84px] items-center justify-center rounded-full bg-white shadow-[0_20px_50px_-20px_rgba(168,239,160,0.6)]">
